@@ -6,6 +6,7 @@ const HeroSection = () => (
   <section
     className="relative overflow-hidden py-24 md:py-36 min-h-[90vh] flex items-center"
   >
+<<<<<<< HEAD
     {/* Clean Gradient Aura */}
     <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[600px] bg-primary/10 blur-[180px] rounded-full opacity-30" />
 
@@ -38,6 +39,24 @@ const HeroSection = () => (
               alt="AI Study Boy Illustration"
               className="w-full max-w-[600px] h-auto object-contain relative z-10 animate-fade-in opacity-80"
             />
+=======
+    <div className="container grid items-center gap-12 md:grid-cols-2">
+      <div className="flex flex-col gap-6 animate-fade-up">
+        <h1 className="font-heading text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
+          AI Study Planner
+        </h1>
+        <p className="text-lg font-medium text-primary md:text-xl">
+          Plan smarter, study better with AI-powered scheduling.
+        </p>
+        <p className="max-w-lg text-muted-foreground">
+          An intelligent study planning tool that helps students generate smart study timetables,
+          prioritize difficult subjects, track learning progress, and stay prepared for exams.
+        </p>
+        <div>
+          <Button size="lg" className="text-base font-semibold shadow-lg" asChild>
+            <Link to="/login">Start Planning</Link>
+          </Button>
+>>>>>>> a03e0e6 (WIP)
         </div>
     </div>
   </section>

@@ -1,9 +1,17 @@
-import { useState, useEffect } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Brain, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import {
@@ -29,20 +37,18 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect if already logged in
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) navigate("/planner");
     });
   }, [navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (isSignup) {
-        // Sign up
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -50,32 +56,28 @@ const Login = () => {
 
         if (error) throw error;
 
-        // Store additional user data in 'users' table
         if (data.user) {
-          const { error: profileError } = await supabase
-            .from('users')
-            .insert([
-              { 
-                id: data.user.id, 
-                full_name: name, 
-                email: email,
-                phone_number: phone,
-                college_name: college,
-                department: department,
-                program: program,
-                semester: semester,
-                roll_number: rollNumber,
-                created_at: new Date().toISOString() 
-              }
-            ]);
-          
+          const { error: profileError } = await supabase.from("users").insert([
+            {
+              id: data.user.id,
+              full_name: name,
+              email,
+              phone_number: phone,
+              college_name: college,
+              department,
+              program,
+              semester,
+              roll_number: rollNumber,
+              created_at: new Date().toISOString(),
+            },
+          ]);
+
           if (profileError) console.error("Profile error:", profileError);
         }
 
         toast.success("Account created successfully!");
         navigate("/planner");
       } else {
-        // Log in
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -97,24 +99,24 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className={`w-full ${isSignup ? "max-w-xl" : "max-w-md"} animate-fade-up glass-panel`}>
         <CardHeader className="text-center">
-            {/* Show back link only on Login view (hide on Sign Up) */}
-            {!isSignup && (
-              <div className="w-full flex justify-start mb-2">
-                <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary">
-                  <ArrowLeft className="h-4 w-4" /> Back to Home
-                </Link>
-              </div>
-            )}
+          {!isSignup && (
+            <div className="w-full flex justify-start mb-2">
+              <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary">
+                <ArrowLeft className="h-4 w-4" /> Back to Home
+              </Link>
+            </div>
+          )}
 
-            <Link to="/" className="mx-auto mb-2 flex items-center gap-2 font-heading text-xl font-bold text-foreground">
-              <Brain className="h-6 w-6 text-primary" />
-              AI Study Planner
-            </Link>
+          <Link to="/" className="mx-auto mb-2 flex items-center gap-2 font-heading text-xl font-bold text-foreground">
+            <Brain className="h-6 w-6 text-primary" />
+            AI Study Planner
+          </Link>
           <CardTitle className="text-2xl">{isSignup ? "Create Account" : "Welcome Back"}</CardTitle>
           <CardDescription>
             {isSignup ? "Join the AI Planner challenge — fill in your details below." : "Log in to your study planner"}
           </CardDescription>
         </CardHeader>
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {isSignup ? (
@@ -122,9 +124,9 @@ const Login = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input 
-                      id="name" 
-                      placeholder="Full Name" 
+                    <Input
+                      id="name"
+                      placeholder="Full Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
@@ -132,9 +134,9 @@ const Login = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input 
-                      id="phone" 
-                      placeholder="Phone Number" 
+                    <Input
+                      id="phone"
+                      placeholder="Phone Number"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
@@ -142,9 +144,9 @@ const Login = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="college">College Name</Label>
-                    <Input 
-                      id="college" 
-                      placeholder="College Name" 
+                    <Input
+                      id="college"
+                      placeholder="College Name"
                       value={college}
                       onChange={(e) => setCollege(e.target.value)}
                       required
@@ -152,9 +154,9 @@ const Login = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dept">Department (e.g., CS, IS)</Label>
-                    <Input 
-                      id="dept" 
-                      placeholder="Department" 
+                    <Input
+                      id="dept"
+                      placeholder="Department"
                       value={department}
                       onChange={(e) => setDepartment(e.target.value)}
                       required
@@ -200,9 +202,9 @@ const Login = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="roll">USN / Roll Number</Label>
-                  <Input 
-                    id="roll" 
-                    placeholder="USN / Roll Number" 
+                  <Input
+                    id="roll"
+                    placeholder="USN / Roll Number"
                     value={rollNumber}
                     onChange={(e) => setRollNumber(e.target.value)}
                     required
@@ -210,10 +212,10 @@ const Login = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Email Address" 
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Email Address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -222,10 +224,10 @@ const Login = () => {
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
-                    <Input 
-                      id="password" 
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="Password" 
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -244,10 +246,10 @@ const Login = () => {
               <>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="you@example.com" 
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -256,10 +258,10 @@ const Login = () => {
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
-                    <Input 
-                      id="password" 
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="••••••••" 
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -276,15 +278,16 @@ const Login = () => {
               </>
             )}
           </CardContent>
+
           <CardFooter className="flex flex-col gap-4">
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? "Processing..." : (isSignup ? "Sign Up" : "Log In")}
+              {loading ? "Processing..." : isSignup ? "Sign Up" : "Log In"}
             </Button>
             <p className="text-sm text-muted-foreground">
               {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
-              <button 
-                type="button" 
-                onClick={() => setIsSignup(!isSignup)} 
+              <button
+                type="button"
+                onClick={() => setIsSignup(!isSignup)}
                 className="text-primary font-medium hover:underline"
               >
                 {isSignup ? "Log In" : "Sign Up"}
@@ -292,7 +295,7 @@ const Login = () => {
             </p>
           </CardFooter>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };
