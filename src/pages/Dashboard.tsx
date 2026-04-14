@@ -24,6 +24,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/lib/supabase";
 import Profile from "@/pages/Profile";
+import SubjectsSection from "@/components/SubjectsSection";
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -138,6 +139,7 @@ const Dashboard = () => {
                 <NavButton icon={<LayoutDashboard />} label="Dashboard" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
                 <NavButton icon={<Calendar />} label="Timetable" active={activeTab === "timetable"} onClick={() => setActiveTab("timetable")} />
                 <NavButton icon={<BookOpen />} label="Syllabus" active={activeTab === "syllabus"} onClick={() => setActiveTab("syllabus")} />
+                <NavButton icon={<BookOpen />} label="Subjects" active={activeTab === "subjects"} onClick={() => setActiveTab("subjects")} />
                 <NavButton icon={<LineChart />} label="Analytics" active={activeTab === "analytics"} onClick={() => setActiveTab("analytics")} />
               </div>
             </div>
@@ -253,6 +255,8 @@ const Dashboard = () => {
                   </Card>
                 </div>
 
+                
+
                 {/* Progress Indicators */}
                 {subjectProgress.map((sub, i) => (
                   <Card key={i} className="bg-[#0a0a0a] border-white hover:border-primary/20 transition-all group">
@@ -278,6 +282,12 @@ const Dashboard = () => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            )}
+
+            {activeTab === "subjects" && (
+              <div className="animate-in fade-in duration-300">
+                <SubjectsSection />
               </div>
             )}
 

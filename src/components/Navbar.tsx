@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Brain } from "lucide-react";
+import { Menu, X, Brain, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
@@ -17,6 +17,27 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [subjectName, setSubjectName] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+
+  const STORAGE_KEY = "ai_study_planner_subjects";
+
+  const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
+
+  const addSubjectQuick = (name: string) => {
+    if (!name.trim()) return;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      arr.unshift({ id: genId(), name: name.trim(), notes: "" });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+      setSubjectName("");
+      setShowAdd(false);
+    } catch (e) {
+      console.warn("Failed to add subject", e);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -80,6 +101,26 @@ const Navbar = () => {
               <Link to="/login">Login / Signup</Link>
             )}
           </Button>
+          {isLoggedIn && (
+            <div className="flex items-center gap-2">
+              {showAdd ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    value={subjectName}
+                    onChange={(e) => setSubjectName(e.target.value)}
+                    placeholder="Add subject"
+                    className="rounded-full px-3 py-1 text-sm bg-white/5 border border-white/10 text-slate-200 outline-none"
+                  />
+                  <Button onClick={() => addSubjectQuick(subjectName)} size="sm">Add</Button>
+                  <Button variant="ghost" size="sm" onClick={() => { setShowAdd(false); setSubjectName(""); }}>Cancel</Button>
+                </div>
+              ) : (
+                <Button variant="ghost" size="sm" onClick={() => setShowAdd(true)} className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" /> Subject
+                </Button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -123,6 +164,26 @@ const Navbar = () => {
                   <Link to="/login" onClick={() => setMobileOpen(false)}>Login / Signup</Link>
                 )}
               </Button>
+              {isLoggedIn && (
+                <div className="pt-2">
+                  {showAdd ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        value={subjectName}
+                        onChange={(e) => setSubjectName(e.target.value)}
+                        placeholder="Add subject"
+                        className="rounded-full px-3 py-1 text-sm bg-white/5 border border-white/10 text-slate-200 outline-none w-full"
+                      />
+                      <Button onClick={() => { addSubjectQuick(subjectName); setMobileOpen(false); }} size="sm">Add</Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setShowAdd(false); setSubjectName(""); setMobileOpen(false); }}>Cancel</Button>
+                    </div>
+                  ) : (
+                    <Button variant="ghost" size="sm" onClick={() => { setShowAdd(true); setMobileOpen(false); }} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" /> Add Subject
+                    </Button>
+                  )}
+                </div>
+              )}
           </div>
         </div>
       )}

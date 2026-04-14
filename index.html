@@ -21,6 +21,20 @@
 
   <body>
     <div id="root"></div>
+    <!-- Runtime error overlay (development helper) -->
+    <div id="__dev_error_overlay" style="display:none;position:fixed;inset:16px;z-index:999999;padding:20px;background:rgba(10,10,10,0.95);color:#ffeeff;font-family:monospace;white-space:pre-wrap;border-radius:8px;overflow:auto;max-height:80vh;box-shadow:0 8px 30px rgba(0,0,0,0.6)"></div>
+    <script>
+      (function(){
+        const overlay = document.getElementById('__dev_error_overlay');
+        function show(msg){ overlay.style.display='block'; overlay.textContent = msg; }
+        window.addEventListener('error', function(e){
+          try{ show('Error: ' + (e.message || e.error && e.error.message) + '\n\n' + (e.filename || '') + ':' + (e.lineno || '') + '\n\n' + (e.error && e.error.stack || '')); }catch(err){ console.error(err); }
+        });
+        window.addEventListener('unhandledrejection', function(e){
+          try{ const r = e.reason; show('Unhandled Rejection: ' + (r && r.message ? r.message : String(r)) + '\n\n' + (r && r.stack ? r.stack : '')); }catch(err){ console.error(err); }
+        });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
